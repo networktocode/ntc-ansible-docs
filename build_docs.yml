@@ -1,0 +1,53 @@
+---
+  - name: Build multi-vendor docs
+    hosts: localhost
+    connection: local
+    gather_facts: no
+
+    vars_files:
+      - variables.yml
+
+    tasks:
+
+    - name: Clean residual Vendor folders
+      file: name=docs/{{ item.key }} state=absent
+      with_dict: vendors
+
+    - name: Recreate Vendor folders
+      file: name=docs/{{ item.key }} state=directory mode=0755
+      with_dict: vendors
+
+    - name: Create Vendor pages
+      template: src=templates/vendor_page.tmpl dest=docs/{{ item.key }}/vendor_page.rst
+      with_dict: vendors
+
+    - name: Get Ansible Repo
+      git: repo={{ item.value.ansible_modules.url }} dest=repos/{{ item.value.ansible_modules.url | basename | replace('.git', '') }} update=yes
+      with_dict: vendors
+      when: "{{ 'ansible_modules' in item.value }} "
+
+    - name: Make Ansible Docs
+      docgen:
+        module_dir: repos/{{ item.value.ansible_modules.url | basename | replace('.git', '') }}/library
+        output_dir: docs/{{ item.key }}/{{ item.value.ansible_modules.name }}
+        make_index: false
+        modules_title: "{{ item.value.ansible_modules.name }}"
+      with_dict: vendors
+      when: "{{ 'ansible_modules' in item.value }} "
+
+    - name: Link Ansible Docs to Vendor Page
+      lineinfile:
+        dest: docs/{{ item.key }}/vendor_page.rst
+        line: '   {{ item.value.ansible_modules.name }}<{{ item.value.ansible_modules.name }}/modules_list>'
+      with_dict: vendors
+      when: "{{ 'ansible_modules' in item.value }} "
+
+    - name: Create Index File
+      template: src=templates/index.tmpl dest=docs/index.rst
+
+    - name: Make Clean
+      command: /usr/bin/make clean chdir=docs/
+
+    - name: Make HTML
+      command: /usr/bin/make html chdir=docs/
+
