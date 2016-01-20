@@ -13,7 +13,5 @@ Hello and welcome to the docs!!!!!
 .. toctree::
    :maxdepth: 1
 
-      NTC<NTC/vendor_page>
-      Juniper<Juniper/vendor_page>
-      Arista<Arista/vendor_page>
+      Multi-vendor<Multi-vendor/vendor_page>
    
