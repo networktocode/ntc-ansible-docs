@@ -1,53 +1,55 @@
 ---
   - name: Build multi-vendor docs
-    hosts: localhost
+    hosts: all
     connection: local
     gather_facts: no
-
-    vars_files:
-      - variables.yml
 
     tasks:
 
     - name: Clean residual Vendor folders
-      file: name=docs/{{ item.key }} state=absent
-      with_dict: vendors
+      file: name=docs/{{ vendor }} state=absent
+      ignore_errors: true
 
     - name: Recreate Vendor folders
-      file: name=docs/{{ item.key }} state=directory mode=0755
-      with_dict: vendors
+      file: name=docs/{{ vendor }} state=directory mode=0755
 
     - name: Create Vendor pages
-      template: src=templates/vendor_page.tmpl dest=docs/{{ item.key }}/vendor_page.rst
-      with_dict: vendors
+      template: src=templates/vendor_page.tmpl dest=docs/{{ vendor }}/vendor_page.rst
+
+    - set_fact:
+        repo_path=repos/{{ url | basename | replace('.git', '') }}
 
     - name: Get Ansible Repo
-      git: repo={{ item.value.ansible_modules.url }} dest=repos/{{ item.value.ansible_modules.url | basename | replace('.git', '') }} update=yes
-      with_dict: vendors
-      when: "{{ 'ansible_modules' in item.value }} "
+      git: repo={{ url }} dest={{ repo_path }} update=yes
 
     - name: Make Ansible Docs
       docgen:
-        module_dir: repos/{{ item.value.ansible_modules.url | basename | replace('.git', '') }}/library
-        output_dir: docs/{{ item.key }}/{{ item.value.ansible_modules.name }}
+        module_dir: "{{ repo_path }}/{{ module_path }}"
+        output_dir: docs/{{ vendor }}/{{ inventory_hostname }}
         make_index: false
-        modules_title: "{{ item.value.ansible_modules.name }}"
-      with_dict: vendors
-      when: "{{ 'ansible_modules' in item.value }} "
+        modules_title: "{{ inventory_hostname }}"
+
+    - name: Add Source Link
+      lineinfile:
+        dest: docs/{{ vendor }}/{{ inventory_hostname }}/modules_list.rst
+        insertbefore: '.. toctree::'
+        line: 'These docs were dynamically created from the modules that can be found `here\n<{{ url }}>`_.\n'
 
     - name: Link Ansible Docs to Vendor Page
       lineinfile:
-        dest: docs/{{ item.key }}/vendor_page.rst
-        line: '   {{ item.value.ansible_modules.name }}<{{ item.value.ansible_modules.name }}/modules_list>'
-      with_dict: vendors
-      when: "{{ 'ansible_modules' in item.value }} "
+        dest: docs/{{ vendor }}/vendor_page.rst
+        line: '   {{ inventory_hostname }}<{{ inventory_hostname }}/modules_list>'
+        insertafter: EOF
 
     - name: Create Index File
       template: src=templates/index.tmpl dest=docs/index.rst
+      run_once: true
 
     - name: Make Clean
       command: /usr/bin/make clean chdir=docs/
+      run_once: true
 
     - name: Make HTML
       command: /usr/bin/make html chdir=docs/
+      run_once: true
 

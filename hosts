@@ -1,1 +1,9 @@
-localhost
+ntc-ansible
+NAPALM
+'Big Switch'
+Juniper
+Arista
+
+
+[all:vars]
+module_path=library/

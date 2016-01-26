@@ -2,6 +2,9 @@ ntc-ansible
 ============
 
 
+These docs were dynamically created from the modules that can be found `here
+<https://github.com/networktocode/ntc-ansible>`_.
+
 .. toctree::
    :maxdepth: 1
 

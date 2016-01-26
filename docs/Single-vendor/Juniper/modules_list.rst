@@ -1,6 +1,9 @@
-Ansible-JunOs
+Juniper
 ============
 
+
+These docs were dynamically created from the modules that can be found `here
+<https://github.com/Juniper/ansible-junos-stdlib.git>`_.
 
 .. toctree::
    :maxdepth: 1

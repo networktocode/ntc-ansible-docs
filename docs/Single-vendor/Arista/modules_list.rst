@@ -1,6 +1,9 @@
-Ansible-EOS
+Arista
 ============
 
+
+These docs were dynamically created from the modules that can be found `here
+<https://github.com/arista-eosplus/ansible-eos.git>`_.
 
 .. toctree::
    :maxdepth: 1

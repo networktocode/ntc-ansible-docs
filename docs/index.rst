@@ -13,5 +13,5 @@ Hello and welcome to the docs!!!!!
 .. toctree::
    :maxdepth: 1
 
-      Multi-vendor<Multi-vendor/vendor_page>
-   
+   Single-vendor<Single-vendor/vendor_page>
+   Multi-vendor<Multi-vendor/vendor_page>
