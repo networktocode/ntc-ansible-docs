@@ -2,6 +2,9 @@ Juniper Modules
 ============
 
 
+These docs were dynamically created from the modules that can be found `here
+<https://github.com/Juniper/ansible-junos-stdlib>`_.
+
 .. toctree:: :maxdepth: 1
 
   junos_commit - Execute commit on device <junos_commit_module>

@@ -2,6 +2,9 @@ Arista Modules
 ============
 
 
+These docs were dynamically created from the modules that can be found `here
+<https://github.com/arista-eosplus/ansible-eos>`_.
+
 .. toctree:: :maxdepth: 1
 
   eos_acl_entry - Manage ACL entries (standard ACLs only) <eos_acl_entry_module>

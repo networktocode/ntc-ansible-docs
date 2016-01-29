@@ -3,9 +3,25 @@ libraries:
   - name: Arista Modules
     url: https://github.com/arista-eosplus/ansible-eos
     path: library
+
   - name: Juniper Modules
     url: https://github.com/Juniper/ansible-junos-stdlib
     path: library
-  - name: Ntc-ansible Modules (multi-vendor)
+
+  - name: ntc-ansible Modules (multi-vendor)
     url: https://github.com/networktocode/ntc-ansible
     path: library
+
+  - name: ansible-snmp Modules (mult-vendor)
+    url: https://github.com/networklore/ansible-snmp
+    path: library
+
+  - name: napalm Modules (mult-vendor)
+    url: https://github.com/networktocode/napalm-ansible
+    path: configuration_management
+
+  - name: napalm Modules (mult-vendor)
+    url: https://github.com/networktocode/napalm-ansible
+    path: data_gathering
+
+

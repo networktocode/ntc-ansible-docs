@@ -34,6 +34,10 @@
         git: repo={{ item.url }} dest=repos/{{ item.url | basename }} update=yes
         with_items: libraries
 
+      - name: Remove previous doc folders
+        file: path=docs/{{ item.name | replace(' ', '\ ') }} state=absent
+        with_items: libraries
+
       - name: Make Ansible Docs
         docgen:
           module_dir: repos/{{ item.url | basename }}/{{ item.path }}
@@ -42,16 +46,13 @@
           modules_title: "{{ item.name }}"
         with_items: libraries
 
-#    - name: Link Docs to Index
-#      lineinfile:
-#        dest: docs/{{ item.key }}/vendor_page.rst
-#        line: '   {{ item.value.ansible_modules.name }}<{{ item.value.ansible_modules.name }}/modules_list>'
-#      with_dict: vendors
-#      when: "{{ 'ansible_modules' in item.value }} "
-#
-#    - name: Create Index File
-#      template: src=templates/index.tmpl dest=docs/index.rst
-#
+      - name: Add Source Link
+        lineinfile:
+          dest: docs/{{ item.name }}/modules_list.rst
+          insertbefore: '.. toctree::'
+          line: 'These docs were dynamically created from the modules that can be found `here\n<{{ item.url }}>`_.\n'
+        with_items: libraries
+
       - name: Make Clean
         command: /usr/bin/make clean chdir=docs/
 
