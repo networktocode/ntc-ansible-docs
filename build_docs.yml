@@ -9,45 +9,52 @@
 
     tasks:
 
-    - name: Clean residual Vendor folders
-      file: name=docs/{{ item.key }} state=absent
-      with_dict: vendors
+      - name: Create Index
+        template: src=templates/index.tmpl dest=docs/index.rst
 
-    - name: Recreate Vendor folders
-      file: name=docs/{{ item.key }} state=directory mode=0755
-      with_dict: vendors
+      - name: Create Introduction
+        template: src=templates/intro.tmpl dest=docs/intro.rst
 
-    - name: Create Vendor pages
-      template: src=templates/vendor_page.tmpl dest=docs/{{ item.key }}/vendor_page.rst
-      with_dict: vendors
+      - name: Create About
+        template: src=templates/about.tmpl dest=docs/about.rst
 
-    - name: Get Ansible Repo
-      git: repo={{ item.value.ansible_modules.url }} dest=repos/{{ item.value.ansible_modules.url | basename | replace('.git', '') }} update=yes
-      with_dict: vendors
-      when: "{{ 'ansible_modules' in item.value }} "
+      - name: Create FAQ
+        template: src=templates/faq.tmpl dest=docs/faq.rst
 
-    - name: Make Ansible Docs
-      docgen:
-        module_dir: repos/{{ item.value.ansible_modules.url | basename | replace('.git', '') }}/library
-        output_dir: docs/{{ item.key }}/{{ item.value.ansible_modules.name }}
-        make_index: false
-        modules_title: "{{ item.value.ansible_modules.name }}"
-      with_dict: vendors
-      when: "{{ 'ansible_modules' in item.value }} "
+      - name: Create Module Index
+        template: src=templates/modules.tmpl dest=docs/modules.rst
 
-    - name: Link Ansible Docs to Vendor Page
-      lineinfile:
-        dest: docs/{{ item.key }}/vendor_page.rst
-        line: '   {{ item.value.ansible_modules.name }}<{{ item.value.ansible_modules.name }}/modules_list>'
-      with_dict: vendors
-      when: "{{ 'ansible_modules' in item.value }} "
+      - name: Link Modules to Index
+        lineinfile:
+          dest: docs/modules.rst
+          line: '   {{ item.name }}<{{ item.name }}/modules_list>'
+        with_items: libraries
 
-    - name: Create Index File
-      template: src=templates/index.tmpl dest=docs/index.rst
+      - name: Get Ansible Repos
+        git: repo={{ item.url }} dest=repos/{{ item.url | basename }} update=yes
+        with_items: libraries
 
-    - name: Make Clean
-      command: /usr/bin/make clean chdir=docs/
+      - name: Make Ansible Docs
+        docgen:
+          module_dir: repos/{{ item.url | basename }}/{{ item.path }}
+          output_dir: docs/{{ item.name }}
+          make_index: false
+          modules_title: "{{ item.name }}"
+        with_items: libraries
 
-    - name: Make HTML
-      command: /usr/bin/make html chdir=docs/
+#    - name: Link Docs to Index
+#      lineinfile:
+#        dest: docs/{{ item.key }}/vendor_page.rst
+#        line: '   {{ item.value.ansible_modules.name }}<{{ item.value.ansible_modules.name }}/modules_list>'
+#      with_dict: vendors
+#      when: "{{ 'ansible_modules' in item.value }} "
+#
+#    - name: Create Index File
+#      template: src=templates/index.tmpl dest=docs/index.rst
+#
+      - name: Make Clean
+        command: /usr/bin/make clean chdir=docs/
+
+      - name: Make HTML
+        command: /usr/bin/make html chdir=docs/
 

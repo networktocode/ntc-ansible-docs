@@ -321,7 +321,7 @@ def print_modules(module, category_file, deprecated, core, options, env, templat
     result = process_module(modname, options, env, template, outputname, module_map, aliases)
 
     if result != "SKIPPED":
-        category_file.write("  %s <%s_module>\n" % (modstring, module))
+        category_file.write("  %s - %s <%s_module>\n" % (modstring, result, module))
 
 def process_category(category, categories, options, env, template, outputname, by_category=True):
 
@@ -447,7 +447,7 @@ def run(by_category=True, modules_title='Modules'):
         category_list_file.write("Modules\n")
         category_list_file.write("============\n")
         category_list_file.write("\n\n")
-        category_list_file.write(".. toctree::\n")
+        category_list_file.write(".. toctree:: ")
         category_list_file.write("   :maxdepth: 1\n\n")
 
         for category in category_names:
@@ -463,8 +463,7 @@ def run(by_category=True, modules_title='Modules'):
         module_list_file.write("%s\n" % modules_title)
         module_list_file.write("============\n")
         module_list_file.write("\n\n")
-        module_list_file.write(".. toctree::\n")
-        module_list_file.write("   :maxdepth: 1\n\n")
+        module_list_file.write(".. toctree:: :maxdepth: 1\n\n")
         module_list_file.close()
 
         process_category('All', categories, options, env, template, outputname, by_category=False)

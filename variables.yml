@@ -1,10 +1,11 @@
 ---
-vendors:
-#  Arista:
-#    ansible_modules: { name: Ansible-EOS, url: 'https://github.com/arista-eosplus/ansible-eos.git'}
-#    python_lib: {}
-#  Juniper:
-#    ansible_modules: { name: Ansible-JunOs, url: 'https://github.com/Juniper/ansible-junos-stdlib.git' }
-#    python_lib: { }
-  Multi-vendor:
-    ansible_modules: { name: ntc-ansible, url: 'https://github.com/networktocode/ntc-ansible' }
+libraries:
+  - name: Arista Modules
+    url: https://github.com/arista-eosplus/ansible-eos
+    path: library
+  - name: Juniper Modules
+    url: https://github.com/Juniper/ansible-junos-stdlib
+    path: library
+  - name: Ntc-ansible Modules (multi-vendor)
+    url: https://github.com/networktocode/ntc-ansible
+    path: library
