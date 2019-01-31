@@ -164,7 +164,7 @@ Examples
         host={{ inventory_hostname }}
         username={{ username }}
         password={{ password }}
-        secret:{{ secret }}
+        secret={{ secret }}
     
 
 
